@@ -1,0 +1,50 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: activitypub.js
+  description: An opinionated, practical and useful implementation of the ActivityPub spec
+basePath: /
+tags:
+  - name: WebFinger
+    description: WebFinger endpoints
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+definitions:
+  WebFinger:
+    type: object
+    title: webfinger
+    required:
+      - subject
+      - links
+    properties:
+      subject:
+        type: string
+        description: The example name
+      links:
+        type: array
+        description: Object containing rel, type and href descriptors
+
+paths:
+  .well-known/webfinger:
+    get:
+      tags:
+        - WebFinger
+      parameters:
+        - name: resource
+          in: path
+          required: true
+          description: The account username to query
+          type: string
+          schema: 
+            $ref: "#/definitions/WebFinger"
+      responses:
+        200:
+          description: Return the resource
+        400:
+          description: Malformed request
+        404:
+          description: Resource not found

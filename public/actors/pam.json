@@ -1,0 +1,21 @@
+{
+	"@context": [
+		"https://www.w3.org/ns/activitystreams",
+		"https://w3id.org/security/v1"
+	],
+
+	"id": "https://my-example.com/pam/",
+	"type": "Person",
+	"preferredUsername": "pam",
+  "inbox": "https://my-example.com/pam/inbox",
+  "outbox": "https://my-example.com/pam/outbox",
+  "followers": "https://my-example.com/pam/followers",
+  "following": "https://my-example.com/pam/following",
+  "liked": "https://my-example.com/pam/liked",
+
+	"publicKey": {
+		"id": "https://my-example.com/actor#main-key",
+		"owner": "https://my-example.com/actor",
+		"publicKeyPem": "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----"
+	}
+}
