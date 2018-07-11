@@ -10,14 +10,18 @@
     "test": "node build.js && mocha test/**/*.ts --exit"
   },
   "dependencies": {
+    "@types/node": "^10.5.2",
     "bluebird": "^3.5.0",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
+    "pg": "^7.4.3",
     "pino": "^4.7.3",
+    "reflect-metadata": "^0.1.12",
     "source-map-support": "^0.4.15",
-    "swagger-express-middleware": "^1.0.0-alpha.12"
+    "swagger-express-middleware": "^1.0.0-alpha.12",
+    "typeorm": "^0.2.7"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.20",

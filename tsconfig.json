@@ -4,8 +4,20 @@
     "target": "es6",
     "module": "commonjs",
     "sourceMap": true,
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
-  "include": ["typings.d.ts", "server/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "typings.d.ts",
+    "server/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": true
+  }
 }

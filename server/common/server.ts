@@ -7,6 +7,7 @@ import * as os from 'os';
 import * as cookieParser from 'cookie-parser';
 import swaggerify from './swagger';
 import l from './logger';
+import './database';
 
 const app = express();
 

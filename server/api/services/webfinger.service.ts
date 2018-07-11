@@ -1,7 +1,6 @@
 import * as Promise from 'bluebird';
 import L from '../../common/logger'
 
-let id = 0;
 interface ReturnActorObject {
   subject?: string,
   links?: Array<Object>
