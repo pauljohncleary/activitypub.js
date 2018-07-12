@@ -2,6 +2,8 @@
 
 An opinionated, practical and useful implementation of the ActivityPub spec
 
+# WARNING, this is VERY early stage and doesn't work yet.
+
 ## Goals
 
 - Fully interoperable with existing ActivityPub implementations (e.g. Mastodon)
