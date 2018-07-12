@@ -2,8 +2,10 @@
 
 ## Webfinger implementation
 - ~~implement /.well-known/webfinger?resource=acct:bob@my-example.com~~
-- implement db (postgres, ORM, test data, user schema) <-- think through schema a bit (inbox/outbox etc.?)
-NEXT STEP: Get postgres running properly & connect to it, then use https://github.com/typeorm/typeorm/blob/master/docs/connection.md to access the connection in the server
+- ~~implement database~~
+- add some test data into the database automatically so the final webfinger test passes
+- implement schema (postgres, ORM, test data, user schema) <-- think through schema a bit (inbox/outbox etc.?)
+- disable sychronise true and setup migrations?
 
 - implement https://${process.env.DOMAIN}/users/${username}` (return actor object at this endpoint)
 - Add public keys to the test actor objects

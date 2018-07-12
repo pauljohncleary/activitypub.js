@@ -38,7 +38,7 @@ describe('Webfinger', () => {
 
   it('should return a 404 when a resource which does not exist is requested', () =>
     request(Server)
-      .get('/.well-known/webfinger?resource=userthatdoesnotexist@example.com')
+      .get('/.well-known/webfinger?resource=acct:userthatdoesnotexist@example.com')
       .expect(404));
 
 });

@@ -17,9 +17,7 @@ export class Controller {
       res.status(400).send(`Supplied resource resides at a different domain, you can only view resources residing at https://${process.env.DOMAIN} at this endpoint.`);
     } else {
       WebFingerService.byResource(resource).then(r => {
-        // TODO: check if found
-        if (r) res.json(r);
-        else res.status(404).end();
+        r ? res.json(r) : res.status(404).end();
       });
     }
   }

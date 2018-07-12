@@ -10,7 +10,7 @@ An opinionated, practical and useful implementation of the ActivityPub spec
 - Vanilla and opinionated
 - Includes applied security best practices 
 - Straightforward to drop in to another node app or bootstrap from
-- Full federated support
+- Full federation support
 
 ## What does this do?
 
@@ -21,9 +21,10 @@ See [some examples](##Try It) of what you can do out of the box.
 ## Stack
 
 - node v8.4.0+
+- Postgres
 - Typescript
 - TypeOrm
-- Express.js
+- Express
 - Pino
 - Mocha
 - Swagger
@@ -33,16 +34,19 @@ See [some examples](##Try It) of what you can do out of the box.
 
 ## Install It
 
-Clone this repo
+- Clone this repo
+- Install node, npm and postgres
 
 ```
+cd activitypub.js
 npm install
 ```
 
 ## Configure it
 
-Adjust the .env file with your specific ActivityPub defaults
-We use some sensible defaults but you can use whatever you like
+- Adjust the `.env` file with your specific defaults. We use some sensible defaults but you can use whatever you like
+- Don't forget to create a database in postgres (default is `activitypub`)
+
 
 ## Run It
 #### In *development* mode:
@@ -73,7 +77,7 @@ cf push activitypub.js
 
 ## Try It
 * Point your browser to [http://localhost:3000](http://localhost:3000)
-* Invoke the example REST endpoint `curl http://localhost:3000/api/v1/examples`
+* Invoke the example REST endpoint `curl http://localhost:3000/.well-known/webfinger`
    
 ### Example endpoints
 
