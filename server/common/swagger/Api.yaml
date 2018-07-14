@@ -7,6 +7,8 @@ basePath: /
 tags:
   - name: WebFinger
     description: WebFinger endpoints
+  - name: ActivityPub
+    description: ActivityPub related endpoints
 
 consumes:
   - application/json
@@ -27,6 +29,32 @@ definitions:
       links:
         type: array
         description: Object containing rel, type and href descriptors
+  Actor:
+    type: object
+    title: actor
+    required:
+    - '@context'
+    - id
+    - type
+    - inbox
+    - outbox
+    properties:
+      '@context':
+        type: array
+        description: JSON-LD context
+      id:
+        type: string
+        description: Globally unique URI to this doc
+      type:
+        type: string
+        description: object type
+      inbox:
+        type: string
+        description: URI to the user's inbox
+      outbox:
+        type: string
+        description: URI to the user's outbox
+      # TODO: add all properties listed here: https://www.w3.org/TR/activitypub/#actor-objects
 
 paths:
   .well-known/webfinger:
@@ -48,3 +76,22 @@ paths:
           description: Malformed request
         404:
           description: Resource not found
+  users/{preferredUsername}:
+      get:
+        summary: Get a user's actor
+        tags:
+          - ActivityPub
+        parameters:
+          - name: preferredUsername
+            in: path
+            type: string
+            required: true
+            schema:
+              $ref: "#/definitions/Actor"
+        responses:
+          200:
+            description: Return the user
+          400:
+            description: Malformed user name
+          404:
+            description: User not found

@@ -9,7 +9,7 @@ describe('Webfinger', () => {
   const testActorUsername = "bob";
 
   before('insert test actor', async () => {
-    await getConnection().connect();
+    !getConnection().isConnected && await getConnection().connect(); // Sometimes the database connection doesn't initialize quickly enough
     const actor = new Actor();
     actor.preferredUsername = testActorUsername;
     actor.publicKeyPem = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----";

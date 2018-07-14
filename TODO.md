@@ -5,10 +5,10 @@
 - ~~implement database~~
 - ~~add some test data into the database automatically so the final webfinger test passes~~
 
-- implement https://${process.env.DOMAIN}/users/${username}` (return actor object at this endpoint)
-- Add public keys to the test actor objects
-- implement schema (postgres, ORM, test data, user schema) <-- think through schema a bit (inbox/outbox etc.?)
-- disable sychronise true and setup migrations?
+- Finish implementing https://${process.env.DOMAIN}/users/${username}` (return full actor object at this endpoint by composing the actor object, adding test data and updating tests)
+
+- Add valid public keys to the test actor objects?
+- disable sychronise true and setup migrations
 
 ## ActivityPub Implementation
 inbox, outbox, followers, following, liked etc. inc http signatures
