@@ -12,10 +12,7 @@ export class WebFingerService {
 
   byResource(resource: string): Promise<ReturnActorObject> {
     const username = resource.replace(/acct:/, "").replace(/@.*/, "");
-    L.info(`fetching actor named ${username}`);
-
     const returnActor = getRepository(Actor).findOne({ preferredUsername: username }).then(actor => {
-      L.info(actor);
       if(actor) {
         const href = `https://${process.env.DOMAIN}/users/${username}`
         return {

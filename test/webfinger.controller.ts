@@ -2,17 +2,32 @@ import 'mocha';
 import { expect } from 'chai';
 import * as request from 'supertest';
 import Server from '../server';
+import { getRepository, getConnection } from "typeorm";
+import { Actor } from "../server/entities/Actor";
 
 describe('Webfinger', () => {
-  it('should respond to GET at /.well-known/webfinger?resource=acct:user@example.com', () =>
+  const testActorUsername = "bob";
+
+  before('insert test actor', async () => {
+    await getConnection().connect();
+    const actor = new Actor();
+    actor.preferredUsername = testActorUsername;
+    actor.publicKeyPem = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----";
+    await getRepository(Actor).save(actor);
+  });
+
+  it('should return the actor details for a user registered the current domain', () =>
     request(Server)
-      .get('/.well-known/webfinger?resource=acct:bob@example.com')
+      .get(`/.well-known/webfinger?resource=acct:${testActorUsername}@${process.env.DOMAIN}`)
       .expect(200)
       .expect('Content-Type', /json/)
       .then(r => {
-        // TODO: check for content
-        expect(r.body)
-          .to.be.an('object')
+        expect(r.body).to.be.an('object');
+        expect(r.body.subject).to.equal(`acct:${testActorUsername}@${process.env.DOMAIN}`);
+        expect(r.body.links).to.be.an('array');
+        expect(r.body.links[0]).to.be.an('object');
+        expect(r.body.links[0].rel).to.equal('self');
+        expect(r.body.links[0].type).to.equal('application/activity+json');
       }));
 
   // https://tools.ietf.org/html/rfc7033#section-4.2
