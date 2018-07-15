@@ -8,12 +8,16 @@ import { Actor } from "../server/entities/Actor";
 describe('Webfinger', () => {
   const testActorUsername = "bob";
 
-  before('insert test actor', async () => {
+  beforeEach('insert test actor', async () => {
     !getConnection().isConnected && await getConnection().connect(); // Sometimes the database connection doesn't initialize quickly enough
     const actor = new Actor();
     actor.preferredUsername = testActorUsername;
     actor.publicKeyPem = "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----";
     await getRepository(Actor).save(actor);
+  });
+
+  afterEach('remove test actors', async () => {
+    await getRepository(Actor).clear(); 
   });
 
   it('should return the actor details for a user registered the current domain', () =>

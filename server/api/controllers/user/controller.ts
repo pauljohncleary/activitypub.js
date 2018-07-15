@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 export class Controller {
 
   getResource(req: Request, res: Response): void {
-    const resource = req.params;
+    const resource = req.params.preferredUsername;
 
     // TODO: add more advanced resource query validation using a library e.g. express-validator
     if (!resource) {
