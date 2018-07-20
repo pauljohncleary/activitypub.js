@@ -7,7 +7,7 @@
 - ~~Finish implementing https://${process.env.DOMAIN}/users/${username}` (basic version only)~~
 
 ## ActivityPub Implementation
-- inbox
+- inbox - finish writing first tests, then implement endpoint
 - outbox
 - followers, following, liked etc. inc http signatures
 - pass test suite etc. https://activitypub.rocks/implementation-report/
@@ -32,3 +32,4 @@ configurable strucuture / routes of URLs, based on .env or config files or we ju
 Provide support for non-human based Actors (e.g. a printer or iot device)
 - Add valid public keys to the test actor objects? or does this depend on the auth version?
 - disable sychronise true and setup migrations
+- add example.env (current .env is not included in git)

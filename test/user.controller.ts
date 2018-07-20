@@ -8,6 +8,7 @@ import { Actor } from "../server/entities/Actor";
 describe('User', () => {
   const testUsername = "alice";
 
+
   beforeEach('insert test actor', async () => {
     !getConnection().isConnected && await getConnection().connect(); // Sometimes the database connection doesn't initialize quickly enough
     const actor = new Actor();
@@ -40,5 +41,5 @@ describe('User', () => {
     request(Server)
       .get('/users/userthatdoesnotexist')
       .expect(404));
-
+      
 });

@@ -55,6 +55,27 @@ definitions:
         type: string
         description: URI to the user's outbox
       # TODO: add all properties listed here: https://www.w3.org/TR/activitypub/#actor-objects
+  ASObject:
+    type: object
+    title: activity-streams-object
+    required:
+      - '@context'
+      - type
+    properties:
+      '@context':
+        type: string
+        description: JSON-LD context
+      type:
+        type: string
+        description: object type (link, activity etc.)
+      id:
+        type: string
+      actor:
+        type: string
+      object:
+        type: object
+      #  TODO: add all properties listed here: https://www.w3.org/TR/activitystreams-vocabulary/#types
+
 
 paths:
   .well-known/webfinger:
@@ -95,3 +116,46 @@ paths:
             description: Malformed user name
           404:
             description: User not found
+  users/{preferredUsername}/inbox: # TODO finish spec
+    get:
+      summary: Get a user's inbox
+      tags:
+        - ActivityPub
+      parameters:
+        - name: preferredUsername
+          in: path
+          type: string
+          required: true
+          schema:
+            $ref: "#/definitions/Actor"
+      responses:
+        200:
+          description: Return the user's inbox
+        400:
+          description: Malformed user name
+        404:
+          description: User not found
+    post:
+      summary: Send a message to a user's inbox
+      consumes:
+        - application/json
+      responses:
+        201:
+          description: Created
+        400:
+          description: Malformed user name
+        404:
+          description: User not found     
+      tags:
+        - ActivityPub
+      parameters:
+        - name: preferredUsername
+          in: path
+          type: string
+          required: true
+        - name: activity-streams-object
+          in: body
+          description: Activity-streams-object to add to the user's inbox
+          required: true
+          schema:
+            $ref: '#/definitions/ASObject'

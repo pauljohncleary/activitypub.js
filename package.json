@@ -20,6 +20,7 @@
     "pino": "^4.7.3",
     "reflect-metadata": "^0.1.12",
     "source-map-support": "^0.4.15",
+    "superagent-http-signature": "^0.2.0",
     "swagger-express-middleware": "^1.0.0-alpha.12",
     "typeorm": "^0.2.7"
   },
