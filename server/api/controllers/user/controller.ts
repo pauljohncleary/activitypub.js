@@ -1,4 +1,5 @@
 import UserService from '../../services/user.service';
+import * as httpSignature from 'http-signature';
 import { Request, Response } from 'express';
 
 export class Controller {
@@ -17,14 +18,22 @@ export class Controller {
 
   postInbox(req: Request, res: Response): void {
     const actorUsername = req.params.preferredUsername;
-
-    // TODO: validate http signature, date, check attributedto and who it's from are the same
     if (!actorUsername) {
       res.status(400).send('Missing username');
     } else {
-      UserService.addObject(actorUsername).then(r => {
-      //  res.status(201).end();
-      });
+
+      const parsed = httpSignature.parseRequest(req); // TODO: handle parsing errors here?
+      const publicKey = parsed.keyId; // TODO: download pub key
+      // TODO: check attributedto and who it's from are the same
+
+      if (!httpSignature.verifySignature(parsed, publicKey)) {
+        res.status(401).send('Request signature could not be verified');
+      } else {
+        // UserService.addObject(actorUsername, req.body).then(r => {
+        res.status(201).end();
+        //});
+      }
+ 
     }
   }
 

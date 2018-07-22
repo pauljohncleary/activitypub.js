@@ -16,6 +16,7 @@
     "cookie-parser": "^1.4.3",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
+    "http-signature": "^1.2.0",
     "pg": "^7.4.3",
     "pino": "^4.7.3",
     "reflect-metadata": "^0.1.12",
