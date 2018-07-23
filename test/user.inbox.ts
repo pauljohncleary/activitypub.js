@@ -5,29 +5,30 @@ import * as request from 'supertest';
 import { getRepository, getConnection } from "typeorm";
 import Server from '../server';
 import { Actor } from "../server/entities/Actor";
+import l from "../server/common/logger";
 
 describe('User inbox API', () => {
   const user1 = "alice";
   const user2 = "bob";
-  // from https://github.com/tootsuite/mastodon/blob/d10447c3a82d771f8ab61837128b011254894694/spec/controllers/well_known/webfinger_controller_spec.rb
-  const examplePublicKey = "-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHgPoPJlrfMZrVcuF39UbVssa8r4ObLP3dYl9Y17Mgp5K4mSYDR/Y2ag58tSi6ar2zM3Ze3QYsNfTq0NqN1g89eAu0MbSjWqpOsgntRPJiFuj3hai2X2Im8TBrkiM/UyfTRgn8q8WvMoKbXk8Lu6nqv420eyqhhLxfUoCpxuem1QIDAQAB-----END PUBLIC KEY-----"
+  const examplePublicKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCFENGw33yGihy92pDjZQhl0C3\n6rPJj+CvfSC8+q28hxA161QFNUd13wuCTUcq0Qd2qsBe/2hFyc2DCJJg0h1L78+6\nZ4UMR7EOcpfdUE9Hf3m/hs+FUR45uBJeDK1HSFHD8bHKD6kv8FPGfJTotc+2xjJw\noYi+1hqp1fIekaxsyQIDAQAB\n-----END PUBLIC KEY-----"
+  const examplePrivateKey = "-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQDCFENGw33yGihy92pDjZQhl0C36rPJj+CvfSC8+q28hxA161QF\nNUd13wuCTUcq0Qd2qsBe/2hFyc2DCJJg0h1L78+6Z4UMR7EOcpfdUE9Hf3m/hs+F\nUR45uBJeDK1HSFHD8bHKD6kv8FPGfJTotc+2xjJwoYi+1hqp1fIekaxsyQIDAQAB\nAoGBAJR8ZkCUvx5kzv+utdl7T5MnordT1TvoXXJGXK7ZZ+UuvMNUCdN2QPc4sBiA\nQWvLw1cSKt5DsKZ8UETpYPy8pPYnnDEz2dDYiaew9+xEpubyeW2oH4Zx71wqBtOK\nkqwrXa/pzdpiucRRjk6vE6YY7EBBs/g7uanVpGibOVAEsqH1AkEA7DkjVH28WDUg\nf1nqvfn2Kj6CT7nIcE3jGJsZZ7zlZmBmHFDONMLUrXR/Zm3pR5m0tCmBqa5RK95u\n412jt1dPIwJBANJT3v8pnkth48bQo/fKel6uEYyboRtA5/uHuHkZ6FQF7OUkGogc\nmSJluOdc5t6hI1VsLn0QZEjQZMEOWr+wKSMCQQCC4kXJEsHAve77oP6HtG/IiEn7\nkpyUXRNvFsDE0czpJJBvL/aRFUJxuRK91jhjC68sA7NsKMGg5OXb5I5Jj36xAkEA\ngIT7aFOYBFwGgQAQkWNKLvySgKbAZRTeLBacpHMuQdl1DfdntvAyqpAZ0lY0RKmW\nG6aFKaqQfOXKCyWoUiVknQJAXrlgySFci/2ueKlIE1QqIiLSZ8V8OlpFLRnb1pzI\n7U1yQXnTAEFYM560yJlzUpOb1V4cScGd365tiSMvxLOvTA==\n-----END RSA PRIVATE KEY-----";
+
   // Message from bob to alice
   const message = {
-    "@context": "https://www.w3.org/ns/activitystreams",
-    "id": "https://my-example.com/create-test-message", // TODO: check this
+    "@context": "http://www.w3.org/ns/activitystreams",
+    "id": "http://my-example.com/create-test-message", // TODO: check this
     "type": "Create",
-    "actor": `https://${process.env.DOMAIN}/users/${user2}`,
+    "actor": `http://${process.env.DOMAIN}/users/${user2}`,
 
     "object": {
-      "id": "https://my-example.com/test-message", // TODO: check this
+      "id": "http://my-example.com/test-message", // TODO: check this
       "type": "Note",
-      "published": "2018-06-23T17:17:11Z",
-      "attributedTo": `https://${process.env.DOMAIN}/users/${user2}`,
+      "published": new Date().toISOString(),
+      "attributedTo": `http://${process.env.DOMAIN}/users/${user2}`,
       "content": "<p>Test Message</p>",
-      "to": `https://${process.env.DOMAIN}/users/${user1}`
+      "to": `http://${process.env.DOMAIN}/users/${user1}`
     }
   };
-
 
   beforeEach('insert test actors', async () => {
     !getConnection().isConnected && await getConnection().connect(); // Sometimes the database connection doesn't initialize quickly enough
@@ -47,25 +48,43 @@ describe('User inbox API', () => {
     await getRepository(Actor).clear();
   });
 
-  const key = "-----BEGIN RSA PRIVATE KEY-----MIICXQIBAAKBgQDHgPoPJlrfMZrVcuF39UbVssa8r4ObLP3dYl9Y17Mgp5K4mSYDR/Y2ag58tSi6ar2zM3Ze3QYsNfTq0NqN1g89eAu0MbSjWqpOsgntRPJiFuj3hai2X2Im8TBrkiM/UyfTRgn8q8WvMoKbXk8Lu6nqv420eyqhhLxfUoCpxuem1QIDAQABAoGBAIKsOh2eM7spVI8mdgQKheEG/iEsnPkQ2R8ehfE9JzjmSbXbqghQJDaz9NU+G3Uu4R31QT0VbCudE9SSA/UPFl82GeQG4QLjrSE+PSjSkuslgSXelJHfAJ+ycGaxajtPyiQD0e4c2loagHNHPjqK9OhHx9mFnZWmoagjlZ+mQGEpAkEA8GtqfS65IaRQuVhMzpp25rF1RWOwaaa+vBPkd7pGdJEQGFWkaR/a9UkU+2C4ZxGBkJDP9FApKVQIRANEwN3/hwJBANRuw5+es6BgBv4PD387IJvuruW2oUtYP+Lb2Z5k77J13hZTr0dbOo9j1UbbR0/4g+vAcsDl4JD9c/9LrGYEpcMCQBon9Yvs+2M3lziy7JhFoc3zXIjSEa1M4M9hcqe78lJYPeIH3z04o/+vlcLLgQRlmSz7NESmO/QtGkEcAezhuh0CQHjipzO4LeO/gXslut3eGcpiYuiZquOjToecMBRwv+5AIKd367Che4uJdh6iPcyGURvhIewfZFFdyZqnx20ui90CQQC1W2rK5Y30wAunOtSLVA30TLK/tKrTppMC3corjKlBFTX8IvYBNTbpEttc1VCf/0ccnNpfb0CrFNSPWxRj7t7D-----END RSA PRIVATE KEY-----";
-
   it('should accept a post to an inbox with a valid signed signature ', async () => {
     await request(Server)
       .post(`/users/${user1}/inbox`)
       .set('Accept', 'application/json')
       .use(superagentHttpSignature({
         headers: ['(request-target)', 'content-md5', 'date'],
-        algorithm: 'hmac-sha256',
-        key,
-        keyId: `https://${process.env.DOMAIN}/users/${user2}`,
+        algorithm: 'rsa-sha512',
+        key: examplePrivateKey,
+        keyId: `http://${process.env.DOMAIN}/users/${user2}#main-key`,
       }))
       .send(message)
-      .expect(201);
+      .expect(201)
+      .then(response => {
+        l.error(response.body);
+      });
   });
 
+  it('should return a 401 for posts without a signed signature', async () => {
+    await request(Server)
+      .post(`/users/${user1}/inbox`)
+      .set('Accept', 'application/json')
+      .send(message)
+      .expect(401);
+  });
 
-  it('should return a 401 for posts with an invalid signature', async () => {
-    //TODO: 
+  it('should return a 401 for posts with missing content and date headers', async () => {
+    await request(Server)
+      .post(`/users/${user1}/inbox`)
+      .set('Accept', 'application/json')
+      .use(superagentHttpSignature({
+        headers: ['(request-target)'],
+        algorithm: 'rsa-sha1',
+        key: examplePrivateKey,
+        keyId: `http://${process.env.DOMAIN}/users/${user2}`,
+      }))
+      .send(message)
+      .expect(401);
   });
 
 });

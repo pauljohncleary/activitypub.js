@@ -33,3 +33,4 @@ Provide support for non-human based Actors (e.g. a printer or iot device)
 - Add valid public keys to the test actor objects? or does this depend on the auth version?
 - disable sychronise true and setup migrations
 - add example.env (current .env is not included in git)
+- implement https://github.com/jhass/nodeinfo
