@@ -52,17 +52,15 @@ describe('User inbox API', () => {
     await request(Server)
       .post(`/users/${user1}/inbox`)
       .set('Accept', 'application/json')
+      .set('date', new Date().toISOString())
       .use(superagentHttpSignature({
-        headers: ['(request-target)', 'content-md5', 'date'],
+        headers: ['date'],
         algorithm: 'rsa-sha512',
         key: examplePrivateKey,
         keyId: `http://${process.env.DOMAIN}/users/${user2}#main-key`,
       }))
       .send(message)
-      .expect(201)
-      .then(response => {
-        l.error(response.body);
-      });
+      .expect(201);
   });
 
   it('should return a 401 for posts without a signed signature', async () => {
@@ -73,18 +71,60 @@ describe('User inbox API', () => {
       .expect(401);
   });
 
-  it('should return a 401 for posts with missing content and date headers', async () => {
+  it('should return a 401 for posts with a missing date header', async () => {
     await request(Server)
-      .post(`/users/${user1}/inbox`)
-      .set('Accept', 'application/json')
-      .use(superagentHttpSignature({
-        headers: ['(request-target)'],
-        algorithm: 'rsa-sha1',
-        key: examplePrivateKey,
-        keyId: `http://${process.env.DOMAIN}/users/${user2}`,
-      }))
-      .send(message)
-      .expect(401);
+    .post(`/users/${user1}/inbox`)
+    .set('Accept', 'application/json')
+    .use(superagentHttpSignature({
+      headers: [],
+      algorithm: 'rsa-sha512',
+      key: examplePrivateKey,
+      keyId: `http://${process.env.DOMAIN}/users/${user2}#main-key`,
+    }))
+    .send(message)
+    .expect(401);
+  });
+
+  it('should return a 400 for posts with a public key id that does not exist', async () => {
+    await request(Server)
+    .post(`/users/${user1}/inbox`)
+    .set('date', new Date().toISOString())
+    .use(superagentHttpSignature({
+      headers: ['date'],
+      algorithm: 'rsa-sha512',
+      key: examplePrivateKey,
+      keyId: `http://${process.env.DOMAIN}/users/fakeuser#main-key`,
+    }))
+    .send(message)
+    .expect(400);
+  });
+
+  it('should return a 401 for posts with a date that is in the past', async () => {
+    await request(Server)
+    .post(`/users/${user1}/inbox`)
+    .set('date', new Date(0).toISOString())
+    .use(superagentHttpSignature({
+      headers: ['date'],
+      algorithm: 'rsa-sha512',
+      key: examplePrivateKey,
+      keyId: `http://${process.env.DOMAIN}/users/${user2}#main-key`,
+    }))
+    .send(message)
+    .expect(401);
+  });
+
+  it('should return a 400 for posts without a message', async () => {
+    await request(Server)
+    .post(`/users/${user1}/inbox`)
+    .set('date', new Date().toISOString())
+    .use(superagentHttpSignature({
+      headers: ['date'],
+      algorithm: 'rsa-sha512',
+      key: examplePrivateKey,
+      keyId: `http://${process.env.DOMAIN}/users/${user2}#main-key`,
+    }))
+    .send({})
+    .expect(400);
   });
 
 });

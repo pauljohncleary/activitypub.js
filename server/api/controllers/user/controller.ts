@@ -35,28 +35,25 @@ export class Controller {
     if (parsed) {
       // TODO: check if parsed.keyId is a URI
       // TODO: check attributedto and who it's from are the same
-      console.log(parsed);
 
-      request.get(parsed.keyId, function (error, response) {        
-        if (error || !response) {
-          res.status(400).send(`Unable to access: ${parsed.keyId}, ${error.message}`);
+      request.get(parsed.keyId, function (error, response) { 
+        if (error || !response || !response.body) {
+          res.status(400).send(`Unable to access: ${parsed.keyId}`);
         } else {
           const jsonBody = JSON.parse(response.body); //TODO: check if JSON parse introduces security holes
           const publicKey = jsonBody.publicKey ? jsonBody.publicKey.publicKeyPem : null; 
-          console.log(publicKey)
           if (publicKey) {
             let verified = false;
             try {
               verified = httpSignature.verifySignature(parsed, publicKey);
             } catch (error) {
-              console.log(error);
               res.status(401).send(`Request signature could not be verified: ${error.message}`);
             }
   
             if (verified) {
-              // TODO: implement UserService.addObject(actorUsername, req.body).then(r => {
-              res.status(201).end();
-              //});
+              UserService.addObject(actorUsername, req.body).then(r => {
+                res.status(201).end();
+              });
             } else {
               res.status(401).send(`Request signature could not be verified`);
             }       

@@ -7,7 +7,9 @@
     "start": "cd build && node main",
     "compile": "node build.js && backpack build",
     "dev": "node build.js && backpack dev | pino -o 'short'",
-    "test": "node build.js && mocha test/**/*.ts --exit"
+    "test": "node build.js && mocha test/**/*.ts --exit",
+    "debug": "node build.js && backpack dev --inspect-brk | pino -o 'short'",
+    "debug-tests": "node build.js && mocha test/**/*.ts --inspect-brk"
   },
   "dependencies": {
     "@types/node": "^10.5.2",

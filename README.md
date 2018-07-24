@@ -70,6 +70,13 @@ npm start
 npm run test
 ```
 
+## Debug it
+
+```
+npm run debug
+```
+Then open `chrome://inspect/#devices` in Chrome and click on `Remote Target`
+
 ## Deploy to the Cloud
 e.g. CloudFoundry
 
