@@ -51,9 +51,9 @@ export class Controller {
             }
   
             if (verified) {
-              UserService.addObject(actorUsername, req.body).then(r => {
+              //UserService.addObjectToInbox(actorUsername, req.body).then(r => {
                 res.status(201).end();
-              });
+              //});
             } else {
               res.status(401).send(`Request signature could not be verified`);
             }       
