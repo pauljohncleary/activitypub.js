@@ -116,9 +116,9 @@ paths:
             description: Malformed user name
           404:
             description: User not found
-  users/{preferredUsername}/inbox: # TODO finish spec
+  users/{preferredUsername}/inbox: # TODO: finish spec
     get:
-      summary: Get a user's inbox
+      summary: Get a user's inbox # TODO: decide if we need to authenticate / add permissions here
       tags:
         - ActivityPub
       parameters:

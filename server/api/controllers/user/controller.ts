@@ -24,6 +24,7 @@ export class Controller {
 
     if (!actorUsername) {
       res.status(400).send('Missing username');
+      // TODO: check if actorUsername exists at this address
     } else {
       try {
         parsed = httpSignature.parseRequest(req);
@@ -33,7 +34,7 @@ export class Controller {
     }
 
     if (parsed) {
-      // TODO: check if parsed.keyId is a URI
+      // TODO: check if parsed.keyId is a URI before trying to get it
       // TODO: check attributedto and who it's from are the same
 
       request.get(parsed.keyId, function (error, response) { 
@@ -49,11 +50,14 @@ export class Controller {
             } catch (error) {
               res.status(401).send(`Request signature could not be verified: ${error.message}`);
             }
+
+            // TODO: validate req.body as ActivityStreams Object
   
             if (verified) {
-              //UserService.addObjectToInbox(actorUsername, req.body).then(r => {
-                res.status(201).end();
-              //});
+              UserService.addObjectToInbox(actorUsername, req.body).then(inbox => {
+                console.log(inbox);
+                inbox ? res.status(201).end() : res.status(500).end();
+              });
             } else {
               res.status(401).send(`Request signature could not be verified`);
             }       

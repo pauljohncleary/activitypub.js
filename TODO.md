@@ -7,7 +7,7 @@
 - ~~Finish implementing https://${process.env.DOMAIN}/users/${username}` (basic version only)~~
 
 ## ActivityPub Implementation
-- inbox - finish writing first tests, then implement endpoint
+- inbox - implement storing messages and actions on them
 - outbox
 - followers, following, liked etc. inc http signatures
 - pass test suite etc. https://activitypub.rocks/implementation-report/

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
+import { Inbox } from "./Inbox";
 
 @Entity()
 export class Actor {
@@ -11,5 +12,8 @@ export class Actor {
 
   @Column()
   publicKeyPem: string;
+
+  @OneToOne(type => Inbox, inbox => inbox.actor)
+  inbox: Inbox;
 
 }

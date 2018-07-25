@@ -5,7 +5,8 @@ import * as request from 'supertest';
 import { getRepository, getConnection } from "typeorm";
 import Server from '../server';
 import { Actor } from "../server/entities/Actor";
-import l from "../server/common/logger";
+import { Inbox } from "../server/entities/Inbox";
+import { ASObject } from "../server/entities/ASObject";
 
 describe('User inbox API', () => {
   const user1 = "alice";
@@ -35,18 +36,30 @@ describe('User inbox API', () => {
     !getConnection().isConnected && await getConnection().connect(); // Sometimes the database connection doesn't initialize quickly enough
 
     const actor = new Actor();
+    const inbox = new Inbox();
+    inbox.summary = `${user1}'s inbox`;
     actor.preferredUsername = user1;
     actor.publicKeyPem = examplePublicKey;
+    actor.inbox = inbox;
     await getRepository(Actor).save(actor);
+    await getRepository(Inbox).save(inbox);
+
 
     const actor2 = new Actor();
+    const inbox2 = new Inbox();
+    inbox2.summary = `${user1}'s inbox`;
     actor2.preferredUsername = user2;
     actor2.publicKeyPem = examplePublicKey;
+    actor2.inbox = inbox2;
     await getRepository(Actor).save(actor2);
+    await getRepository(Inbox).save(inbox2);
+
   });
 
   afterEach('remove test actors', async () => {
-    await getRepository(Actor).clear();
+    await getRepository(ASObject).delete({});
+    await getRepository(Inbox).delete({});
+    await getRepository(Actor).delete({});
   });
 
   it('should accept a post to an inbox with a valid signed signature ', async () => {
@@ -142,5 +155,8 @@ describe('User inbox API', () => {
     .send({})
     .expect(400);
   });
+
+  // TODO: return 401 for messages to users that don't have an inbox
+  // TODO: retrieve inbox
 
 });
