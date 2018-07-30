@@ -20,6 +20,7 @@ export class UserService {
     const domain = process.env.DOMAIN;
     const returnUser = getRepository(Actor).findOne({ preferredUsername }).then(actor => {
       if (actor) {
+        // TODO: switch building this to activitystrea.ms library?
         return {
           "@context": [
             "https://www.w3.org/ns/activitystreams",
@@ -44,15 +45,12 @@ export class UserService {
     return Promise.resolve(returnUser);
   }
 
-  async addObjectToInbox(user: string, message: object): Promise<Inbox> {
+  async addObjectToInbox(user: string, message: object): Promise<ASObject> {
+    const actor = await getRepository(Actor).findOneOrFail({ preferredUsername: user }, { relations: ["inbox"] });
     const asObject = new ASObject();
     asObject.asObject = message;
-    await getRepository(ASObject).save(asObject);
-    const actor = await getRepository(Actor).findOneOrFail({ preferredUsername: user }, { relations: ["inbox"] });
-    console.log(actor);
-    const inbox = actor.inbox;
-    inbox.items.push(asObject);
-    return await getRepository(Inbox).save(inbox);
+    asObject.inbox = actor.inbox;
+    return await getRepository(ASObject).save(asObject);
   }
 
 }

@@ -55,7 +55,6 @@ export class Controller {
   
             if (verified) {
               UserService.addObjectToInbox(actorUsername, req.body).then(inbox => {
-                console.log(inbox);
                 inbox ? res.status(201).end() : res.status(500).end();
               });
             } else {

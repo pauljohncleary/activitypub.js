@@ -17,7 +17,7 @@ describe('Webfinger', () => {
   });
 
   afterEach('remove test actors', async () => {
-    await getRepository(Actor).clear(); 
+    await getRepository(Actor).delete({});
   });
 
   it('should return the actor details for a user registered the current domain', () =>

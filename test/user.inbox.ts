@@ -41,8 +41,8 @@ describe('User inbox API', () => {
     actor.preferredUsername = user1;
     actor.publicKeyPem = examplePublicKey;
     actor.inbox = inbox;
-    await getRepository(Actor).save(actor);
     await getRepository(Inbox).save(inbox);
+    await getRepository(Actor).save(actor);
 
 
     const actor2 = new Actor();
@@ -51,8 +51,8 @@ describe('User inbox API', () => {
     actor2.preferredUsername = user2;
     actor2.publicKeyPem = examplePublicKey;
     actor2.inbox = inbox2;
-    await getRepository(Actor).save(actor2);
     await getRepository(Inbox).save(inbox2);
+    await getRepository(Actor).save(actor2);
 
   });
 
