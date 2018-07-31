@@ -59,6 +59,7 @@ export class Controller {
                 }
 
                 // TODO: validate req.body as ActivityStreams Object
+                // TODO: remove properties that can be re-created easily instead of just dumping the entire message
 
                 if (verified) {
                   UserService.addObjectToInbox(actorUsername, req.body).then(inbox => {
