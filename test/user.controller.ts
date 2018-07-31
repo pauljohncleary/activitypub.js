@@ -4,6 +4,8 @@ import * as request from 'supertest';
 import { getRepository, getConnection } from "typeorm";
 import Server from '../server';
 import { Actor } from "../server/entities/Actor";
+import { ASObject } from '../server/entities/ASObject';
+import { Inbox } from '../server/entities/Inbox';
 
 describe('User', () => {
   const testUsername = "alice";
@@ -18,6 +20,8 @@ describe('User', () => {
   });
 
   afterEach('remove test actors', async () => {
+    await getRepository(ASObject).delete({});
+    await getRepository(Inbox).delete({});
     await getRepository(Actor).delete({});
   });
 

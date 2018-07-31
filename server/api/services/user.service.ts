@@ -46,11 +46,15 @@ export class UserService {
   }
 
   async addObjectToInbox(user: string, message: object): Promise<ASObject> {
-    const actor = await getRepository(Actor).findOneOrFail({ preferredUsername: user }, { relations: ["inbox"] });
-    const asObject = new ASObject();
-    asObject.asObject = message;
-    asObject.inbox = actor.inbox;
-    return await getRepository(ASObject).save(asObject);
+    const actor = await getRepository(Actor).findOne({ preferredUsername: user }, { relations: ["inbox"] });
+    if (actor) {
+      const asObject = new ASObject();
+      asObject.asObject = message;
+      asObject.inbox = actor.inbox;
+      return await getRepository(ASObject).save(asObject);
+    } else {
+      return null;
+    }
   }
 
 }
