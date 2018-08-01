@@ -57,6 +57,10 @@ export class UserService {
     }
   }
 
+  async checkUsernameExists(preferredUsername: string): Promise<Actor> {
+    return await getRepository(Actor).findOne({ preferredUsername });
+  }
+
 }
 
 export default new UserService();
