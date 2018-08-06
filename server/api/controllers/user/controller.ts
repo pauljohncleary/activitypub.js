@@ -13,11 +13,11 @@ export class Controller {
     });
   }
 
-  getInbox(req: Request, res: Response): Response {
+  getInbox(req: Request, res: Response): void {
     const actorUsername = req.params.preferredUsername;
-
-    
-    return res.status(500).send();
+    UserService.buildInbox(actorUsername).then(inbox => {
+      return res.json(inbox);
+    });
   }
 
   postInbox(req: Request, res: Response): Response {

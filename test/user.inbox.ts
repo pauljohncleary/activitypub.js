@@ -211,7 +211,7 @@ describe('User inbox GET requests', () => {
     actor.publicKeyPem = examplePublicKey;
     actor.inbox = inbox;
     asObject.inbox = inbox;
-    asObject.asObject = {}; // TODO: store less than a full message here?
+    asObject.asObject = message; // TODO: store less than a full message here?
     await getRepository(Inbox).save(inbox);
     await getRepository(ASObject).save(asObject);
     await getRepository(Actor).save(actor);
@@ -221,9 +221,13 @@ describe('User inbox GET requests', () => {
   it('should retrieve all inbox items as an ordered collection', async () => {
     await request(Server)
       .get(`/users/${user1}/inbox`)
-      .expect(200);
+      .expect(20000);
       // TODO: check response is an https://www.w3.org/TR/activitystreams-vocabulary/#dfn-orderedcollection
 
   });
+
+  // Deduplicate
+
+  // Filter based on preferences
 });
 

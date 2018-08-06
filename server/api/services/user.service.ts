@@ -4,7 +4,7 @@ import { getConnection, getRepository } from "typeorm";
 import { Actor } from "../../entities/Actor";
 import { Inbox } from "../../entities/Inbox";
 import { ASObject } from "../../entities/ASObject";
-import activitystreams from "activitystrea.ms";
+import * as activitystreams from "activitystrea.ms";
 
 interface ReturnUserObject {
   '@context'?: Array<string>,
@@ -59,6 +59,31 @@ export class UserService {
 
   async checkUsernameExists(preferredUsername: string): Promise<Actor> {
     return await getRepository(Actor).findOne({ preferredUsername });
+  }
+
+  async buildInbox(preferredUsername: string): Promise<Object> {
+    // TODO: simplify this into one query
+    const actor = await getRepository(Actor).findOne({ preferredUsername }, { relations: ['inbox'] });
+    const actorId = actor.inbox.id;
+    const actorInbox = await getRepository(Inbox).findOne({ id: actorId });
+    const objects = await getRepository(ASObject).find({ inbox: actorInbox });
+    const count = objects.length;
+    console.log(objects);
+    // TODO: filter based on request
+    // TODO: deduplicate
+
+    const inbox = activitystreams.orderedCollection().totalItems(count);
+
+    objects.forEach(function (item) {
+      inbox.items(item.asObject); // I think to actually make this work we need to store the data in the AS collection properly (i.e. not just dumpt the object in)
+    });
+
+    inbox.get().prettyWrite((err, doc) => {
+      if (err) throw err;
+      console.log(doc);
+    });;
+
+    return inbox;
   }
 
 }
